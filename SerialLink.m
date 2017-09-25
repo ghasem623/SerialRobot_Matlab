@@ -42,7 +42,7 @@ classdef SerialLink < handle
                 mat_rot=mat_rot*cur_mat_rot;
                 v_r=cur_v_r+mat_rot*[robot.MatDH(itdof,2);0;0];
                 
-            end
+            end            
         end
         
         function RobotPlot(robot, q, varargin)            

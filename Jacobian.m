@@ -5,28 +5,25 @@
 classdef Jacobian < handle
     
     properties
-        actuatorkin
         robot
         Je_total
         J0_total
     end
     methods
         
-        function s = Jacobian(robot,actuatorkin)
-            if (~isa(robot,'SerialLink'))||(~isa(actuatorkin,'ActuatorKin'))
+        function s = Jacobian(robot)
+            if (~isa(robot,'SerialLink'))
                 error('The model should be of SerialLink Class');
-            elseif robot.n~=actuatorkin.num_motor
-                error('Number of robot DoF is not equal to number of motor input');
             else
                 s.robot = robot;
-                s.actuatorkin = actuatorkin;
             end
         end
         
         
         
-        function compute(obj)
-            for itSample=1:obj.actuatorkin.num_sample
+        function compute(obj,q_input)
+            [nrow,num_sample]=size(q_input);
+            for itSample=1:num_sample
                 
                 caur_mat_rot=eye(3);
                 cur_v_a=zeros(3,1);
@@ -41,7 +38,7 @@ classdef Jacobian < handle
                     
                     
                     if obj.robot.MatDH(itdof,1)==0
-                        theta=obj.actuatorkin.q(itSample,itdof);
+                        theta= q_input(itdof,itSample);
                         mat_rot_i=[cos(theta) -cos(alpha)*sin(theta) sin(alpha)*sin(theta);  sin(theta) cos(alpha)*cos(theta) -sin(alpha)*cos(theta); 0 sin(alpha) cos(alpha)];
                         caur_mat_rot=mat_rot_i*caur_mat_rot;
                         cur_v_a=cur_v_a+caur_mat_rot'*[0;0;obj.robot.MatDH(itdof,4)];

@@ -66,7 +66,7 @@ classdef IK_NR_NG < handle
                     cur_K_obj.compute(cur_q_t);
                     curK0=cur_K_obj.J0_total;
                     curK0(:,obj.locked_q)=[];
-                    cur_J=[(eye(3)*cur_tr_R-cur_mat_rot)*curK0(4:6,:); -2*(cur_vect_R')*curK0(4:6,:);curK0(1:3,:)];
+                    cur_J=[(eye(3)*cur_tr_R-cur_mat_rot)*curK0(4:6,:); -2*(cur_vect_R')*curK0(4:6,:);curK0(1:3,:)];                  
                     cur_q=cur_q-pinv(cur_J)*vect_f;
                     cur_q_t(obj.list_active_q)=cur_q;
                 end

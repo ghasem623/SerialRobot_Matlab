@@ -12,18 +12,27 @@ L(5) = Link('revolute', 'a', 0, 'd', 0, 'alpha', 90*pi/180);
 L(6) = Link('revolute', 'a', 0, 'd', 20, 'alpha', 0*pi/180);
 
 sixlink = SerialLink(L);
-matq(:,1)=[90*pi/180; 0*pi/180; 180*pi/180; 180*pi/180; 0*pi/180; 0*pi/180]+(1+2*rand(6,1))*pi/180;
+
+thetaincr=-3;lamda=6;
+matq(:,1)=[90*pi/180; 0*pi/180; 180*pi/180; 180*pi/180; 0*pi/180; 0*pi/180]+(thetaincr+lamda*rand)*pi/180;
 
 for itntraj=2:10
-   matq(:,itntraj)=matq(:,itntraj-1)+(1+2*rand(6,1))*pi/180;
+    matq(:,itntraj)=matq(:,itntraj-1)+(thetaincr+lamda*rand)*pi/180;
+%     sixlink.RobotPlot(matq(:,itntraj),3);
+%     hold off
 end
 fkobj = FKinRotMat(sixlink);
 fkobj.compute(matq);
-ikobj=IK_NR_NG(sixlink,[],[],100);
+
+% ikobj=IK_NR_NG(sixlink,[],[],100);
+ikobj=IK_NR_SYM(sixlink,[],[],100);
+
+
 for itntraj=2:10
     q_com=ikobj.compute(fkobj.v_r_total(:,itntraj),fkobj.mat_rot_total(:,:,itntraj),matq(:,itntraj-1));
-    q_com
-    matq(:,itntraj)
+    if sum(norm(q_com- matq(:,itntraj)))>1e-4
+       q_com- matq(:,itntraj)
+    end
 end
 
 % 

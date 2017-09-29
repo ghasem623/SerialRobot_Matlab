@@ -24,8 +24,8 @@ classdef SerialLink < handle
             if length(q) ~= robot.n
                 error('q must have %d columns', robot.n);
             end
-            row_rev=(robot.MatDH(:,1)==0);
-            row_per=(robot.MatDH(:,1)==1);
+            row_rev=find(robot.MatDH(:,1)==0);
+            row_per=find(robot.MatDH(:,1)==1);
             robot.MatDH(row_rev,5)=q(row_rev);
             robot.MatDH(row_per,4)=q(row_per);
             
